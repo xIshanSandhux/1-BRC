@@ -1,29 +1,30 @@
 #include <iostream>
-#include <fstream>
+#include <cstdio>
 #include <chrono>
 using namespace std;
 
 int main(){
+
     auto start = std::chrono::high_resolution_clock::now();
-    std::ifstream sampleFile("sample.txt");
-    std::string line;
+    size_t bytesRead, bufferSize = 4096;
+    char *buffer = new char[bufferSize];
 
-    // checking if the file exists or not
-    if(!sampleFile.is_open()){
-        cout<<"File Not Found\n";
-        // indicating that its an error
+    FILE* fp = fopen("sample.txt","rb");
+    if(!fp){
+        cerr<<"file not found";
         return 1;
-
     }
 
-    while(std::getline(sampleFile,line)){
+    while((bytesRead=fread(buffer,sizeof buffer[0],bufferSize,fp))>0){
+        if(bytesRead==0){
+            break;
+        }
     }
+    fclose(fp);
 
     auto end = std::chrono::high_resolution_clock::now();
 
     auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
     std::cout << ns.count() << " ns\n";
-
-
     return 0;
 }
