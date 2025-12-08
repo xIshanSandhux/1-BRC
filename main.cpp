@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <chrono>
+#include <string>
+#include <set>
 using namespace std;
 
 int main(){
@@ -9,6 +11,9 @@ int main(){
     std::string line;
     string toFind = "apple";
     int counter=0;
+
+    // creating a set for storing the lines
+    set<string> hitLines ={};
 
     // checking if the file exists or not
     if(!sampleFile.is_open()){
@@ -21,13 +26,15 @@ int main(){
     size_t pos,len = toFind.length();
     while(std::getline(sampleFile,line)){
         pos = line.find(toFind);
-        while(pos!=std::string::npos){
-           counter++;
-           pos = line.find(toFind,pos+len);
+        if(pos!=std::string::npos){
+            hitLines.insert(line);
         }
     }
 
-    cout<< counter << " for the word: " << toFind <<endl;
+    //printing the lines word found in
+    for(string elements : hitLines){
+        cout << elements << endl;
+    }
 
     auto end = std::chrono::high_resolution_clock::now();
 

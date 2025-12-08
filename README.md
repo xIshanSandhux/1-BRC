@@ -13,4 +13,8 @@ however these change are only noticeable when playing with large files. with sma
 
 
 ## search substring
-for the unoptimized version using the .find() to find all the occurence of the word in the whole file.
+for the unoptimized version using the .find() to find the word match in each line,
+
+using a set to store the line match found in, and only checking for first occurrence of the word and not all because if the lines contains >1 words the one i am trying to, all of them will be printed in the same line. so yeah.....
+
+Oh also using sets, because the lookup is O(1) where as vectors got lookup O(n) because thats an array and set is a dict with unique values. so yeah.....
