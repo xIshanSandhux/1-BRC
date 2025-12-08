@@ -7,6 +7,8 @@ int main(){
     auto start = std::chrono::high_resolution_clock::now();
     std::ifstream sampleFile("sample.txt");
     std::string line;
+    string toFind = "apple";
+    int counter=0;
 
     // checking if the file exists or not
     if(!sampleFile.is_open()){
@@ -16,8 +18,16 @@ int main(){
 
     }
 
+    size_t pos,len = toFind.length();
     while(std::getline(sampleFile,line)){
+        pos = line.find(toFind);
+        while(pos!=std::string::npos){
+           counter++;
+           pos = line.find(toFind,pos+len);
+        }
     }
+
+    cout<< counter << " for the word: " << toFind <<endl;
 
     auto end = std::chrono::high_resolution_clock::now();
 

@@ -21,6 +21,7 @@ int main(){
         }
     }
     fclose(fp);
+    delete buffer;
 
     auto end = std::chrono::high_resolution_clock::now();
 
