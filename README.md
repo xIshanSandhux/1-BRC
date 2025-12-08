@@ -7,7 +7,7 @@ using fread for reading file which brought the file read down from around 100000
 
 also could used fstream for reading the file to make the unoptimized version is bit more slower as it would add a bit more overhead, but using ifstream as I am only reading the file.
 
-i can further optimize it more by using read() instead of fread or mmap, might do that later.
+i can further optimize it more by using read() or mmap instead of fread, might do that later (prolly will just for fun).
 
 however these change are only noticeable when playing with large files. with small files its more or less the same.
 
