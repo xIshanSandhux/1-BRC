@@ -8,12 +8,42 @@
 using namespace std;
 
 int main(){
-    auto start = std::chrono::high_resolution_clock::now();
     std::ifstream sampleFile("sample.txt");
     std::string line;
-    std::vector<string> values;
-    std::map<string,std::vector<string>> hMap;
+    size_t pos;
+    std::string station;
+    float temp;
 
+
+    struct tempStuff{
+        float min;
+        float max;
+        float sum;
+        int count;
+
+        void update(float temp){
+            if(min>temp) min = temp;
+            if(max<temp) max = temp;
+            sum+=temp;
+            count++;
+        }
+        void initalize(float temp){
+            min = temp;
+            max = temp;
+            sum = temp;
+            count = 1;
+        }
+        
+        float avg(){
+            return sum/count;
+        }
+    };
+
+
+
+    std::map<string,tempStuff> hMap;
+
+    auto start = std::chrono::high_resolution_clock::now();
     // checking if the file exists or not
     if(!sampleFile.is_open()){
         cout<<"File Not Found\n";
@@ -22,24 +52,23 @@ int main(){
 
     }
 
-    size_t pos;
-    while(std::getline(sampleFile,line)){
+        while(std::getline(sampleFile,line)){
         pos = line.find(";");
-        if (hMap.find(line.substr(0,pos))!=hMap.end()){
-            hMap[line.substr(0,pos)].push_back(line.substr(pos+1));
+        station = line.substr(0,pos);
+        temp = std::stof(line.substr(pos+1));
+        if (hMap.find(station)!=hMap.end()){
+            hMap[station].update(temp);
         }else{
-            hMap[line.substr(0,pos)] = values;
-            hMap[line.substr(0,pos)].push_back(line.substr(pos+1));
+            hMap[station].initalize(temp);
         }
-        // cout << line.substr(pos+1) << endl; 
     }
 
+    
+    auto end = std::chrono::high_resolution_clock::now();
     for (auto it = hMap.begin(); it != hMap.end(); ++it) {
         std::cout << it->first << endl;
     }
 
-
-    auto end = std::chrono::high_resolution_clock::now();
 
     auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
     std::cout << ns.count() << " ns\n";
