@@ -2,6 +2,8 @@
 #include <fstream>
 #include <chrono>
 #include <string>
+#include <map>
+#include <vector>
 #include <set>
 using namespace std;
 
@@ -9,11 +11,8 @@ int main(){
     auto start = std::chrono::high_resolution_clock::now();
     std::ifstream sampleFile("sample.txt");
     std::string line;
-    string toFind = "apple";
-    int counter=0;
-
-    // creating a set for storing the lines
-    set<string> hitLines ={};
+    std::vector<string> values;
+    std::map<string,std::vector<string>> hMap;
 
     // checking if the file exists or not
     if(!sampleFile.is_open()){
@@ -23,18 +22,22 @@ int main(){
 
     }
 
-    size_t pos,len = toFind.length();
+    size_t pos;
     while(std::getline(sampleFile,line)){
-        pos = line.find(toFind);
-        if(pos!=std::string::npos){
-            hitLines.insert(line);
+        pos = line.find(";");
+        if (hMap.find(line.substr(0,pos))!=hMap.end()){
+            hMap[line.substr(0,pos)].push_back(line.substr(pos+1));
+        }else{
+            hMap[line.substr(0,pos)] = values;
+            hMap[line.substr(0,pos)].push_back(line.substr(pos+1));
         }
+        // cout << line.substr(pos+1) << endl; 
     }
 
-    //printing the lines word found in
-    for(string elements : hitLines){
-        cout << elements << endl;
+    for (auto it = hMap.begin(); it != hMap.end(); ++it) {
+        std::cout << it->first << endl;
     }
+
 
     auto end = std::chrono::high_resolution_clock::now();
 
