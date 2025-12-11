@@ -34,7 +34,7 @@ int main(){
             count = 1;
         }
         
-        float avg(){
+        double avg () const{
             return sum/count;
         }
     };
@@ -64,14 +64,18 @@ int main(){
     }
 
     
-    auto end = std::chrono::high_resolution_clock::now();
-    for (auto it = hMap.begin(); it != hMap.end(); ++it) {
-        std::cout << it->first << endl;
+
+    for(const auto& [key,value]:hMap){
+        // cout.precision(2);
+        cout << key << ";min="<<value.min<<";max="<<value.max<<";avg="<< value.avg() <<endl;
     }
 
+    auto end = std::chrono::high_resolution_clock::now();
 
     auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
+    auto ms = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
     std::cout << ns.count() << " ns\n";
+    cout<<ms.count()<<" ms\n";
 
 
     return 0;
