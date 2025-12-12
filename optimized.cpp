@@ -1,5 +1,8 @@
 #include <iostream>
 #include <fcntl.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <cstdio>
 #include <chrono>
 using namespace std;
@@ -7,13 +10,19 @@ using namespace std;
 int main(){
 
     auto start = std::chrono::high_resolution_clock::now();
-    // size_t bytesRead, bufferSize = 4096;
-    // char *buffer = new char[bufferSize];
-
     
     int fd = open("sample.txt",O_RDONLY);
-    cout<<fd <<endl;
-    // delete buffer;
+    struct stat st;
+    fstat(fd,&st);
+    size_t fileSize = st.st_size;
+
+    char* file = (char*) mmap(NULL,fileSize,PROT_READ,MAP_PRIVATE,fd,0);
+
+    for (size_t i=0;i<fileSize;i++){
+        volatile char c = file[i];
+    }
+    munmap(file,fileSize);
+    close(fd);
 
     auto end = std::chrono::high_resolution_clock::now();
 
