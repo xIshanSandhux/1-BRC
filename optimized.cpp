@@ -18,8 +18,20 @@ int main(){
 
     char* file = (char*) mmap(NULL,fileSize,PROT_READ,MAP_PRIVATE,fd,0);
 
-    for (size_t i=0;i<fileSize;i++){
-        volatile char c = file[i];
+    size_t curr_pos=0, lineStart,lineEnd;
+    while(curr_pos<fileSize){
+        lineStart=curr_pos;
+        while(curr_pos<fileSize && file[curr_pos]!= '\n'){
+            curr_pos++;
+        }
+        if(curr_pos==fileSize){
+            break;
+        }
+        lineEnd=curr_pos;
+        while(lineStart<lineEnd){
+            lineStart++;
+        }
+        curr_pos++;
     }
     munmap(file,fileSize);
     close(fd);
