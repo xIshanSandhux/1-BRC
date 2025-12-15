@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <cstdio>
 #include <chrono>
+#include <cstring>
 using namespace std;
 
 int main(){
@@ -19,19 +20,35 @@ int main(){
     char* file = (char*) mmap(NULL,fileSize,PROT_READ,MAP_PRIVATE,fd,0);
 
     size_t curr_pos=0, lineStart,lineEnd;
+    size_t* line;
     while(curr_pos<fileSize){
         lineStart=curr_pos;
-        while(curr_pos<fileSize && file[curr_pos]!= '\n'){
-            curr_pos++;
-        }
-        if(curr_pos==fileSize){
-            break;
-        }
-        lineEnd=curr_pos;
-        while(lineStart<lineEnd){
+        line = (size_t*)memchr(file,'\n',fileSize-curr_pos);
+        char* line1 = (char*)memchr(file,'\n',fileSize-curr_pos);
+        
+        // lineEnd= *line;
+        if(line==nullptr) break;
+
+        while(lineStart<*line){
+            cout<<file[lineStart];
             lineStart++;
         }
-        curr_pos++;
+
+
+        // cout<<line<<endl;
+        curr_pos=*line+1;
+        // curr_pos = line;
+        // while(curr_pos<fileSize && file[curr_pos]!= '\n'){
+        //     curr_pos++;
+        // }
+        // if(curr_pos==fileSize){
+        //     break;
+        // }
+        // lineEnd=curr_pos;
+        // while(lineStart<lineEnd){
+        //     lineStart++;
+        // }
+        // curr_pos++;
     }
     munmap(file,fileSize);
     close(fd);
