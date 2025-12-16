@@ -6,7 +6,34 @@
 #include <cstdio>
 #include <chrono>
 #include <cstring>
+#include <unordered_map>
 using namespace std;
+
+
+struct Stats{
+    float sum=0;
+    float max;
+    float min;
+    int count=0;
+
+    Stats(float temp){
+        max = temp;
+        min = temp;
+        sum+=temp;
+        count++;
+    }
+
+    void update(float temp){
+        if(max<temp) max=temp;
+        if(min>temp) min=temp;
+        sum+=temp;
+        count++;
+    }
+
+};
+
+unordered_map<string,Stats> db;
+
 
 int main(){
 
@@ -44,3 +71,4 @@ int main(){
     std::cout << ns.count() << " ns\n";
     return 0;
 }
+
