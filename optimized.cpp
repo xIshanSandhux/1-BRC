@@ -19,36 +19,21 @@ int main(){
 
     char* file = (char*) mmap(NULL,fileSize,PROT_READ,MAP_PRIVATE,fd,0);
 
-    size_t curr_pos=0, lineStart,lineEnd;
-    size_t* line;
-    while(curr_pos<fileSize){
-        lineStart=curr_pos;
-        line = (size_t*)memchr(file,'\n',fileSize-curr_pos);
-        char* line1 = (char*)memchr(file,'\n',fileSize-curr_pos);
-        
-        // lineEnd= *line;
-        if(line==nullptr) break;
+    size_t curr_pos=0;
+    char* lineStart= file;
+    char*lineEnd;
 
-        while(lineStart<*line){
-            cout<<file[lineStart];
+    size_t lineSize=0,counter=0;
+    while(lineEnd!=nullptr){
+        lineEnd = (char*)memchr(lineStart,'\n',fileSize-lineSize);
+        if(lineEnd==nullptr) break;
+        lineSize=lineEnd-lineStart;
+        while(counter<lineSize){
             lineStart++;
+            counter++;
         }
-
-
-        // cout<<line<<endl;
-        curr_pos=*line+1;
-        // curr_pos = line;
-        // while(curr_pos<fileSize && file[curr_pos]!= '\n'){
-        //     curr_pos++;
-        // }
-        // if(curr_pos==fileSize){
-        //     break;
-        // }
-        // lineEnd=curr_pos;
-        // while(lineStart<lineEnd){
-        //     lineStart++;
-        // }
-        // curr_pos++;
+        counter=0;
+        lineStart=lineEnd+1;
     }
     munmap(file,fileSize);
     close(fd);

@@ -16,6 +16,7 @@ int main(){
         return 1;
 
     }
+    
 
     while(std::getline(sampleFile,line)){
     }
