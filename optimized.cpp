@@ -7,6 +7,7 @@
 #include <chrono>
 #include <cstring>
 #include <unordered_map>
+#include <string_view>
 using namespace std;
 
 
@@ -34,25 +35,12 @@ struct Stats{
 
 unordered_map<string,Stats> db;
 
-
-void parseTemp(char* start, char* end){
-
-    // cout<<"parse Station called\n";
-    while(*start!=*end){
-        cout<<*start;
-        start++;
-    }
-    cout<<"\n";
+void parseLine(char* start, char* mid, char* end){
+    string_view station(start,mid-start);
+    string_view temp(mid,end-mid);
 }
 
-void parseStation(char* start,char* end){
-    // cout<<"parse Station called\n";
-    while(*start!=*end){
-        cout<<*start;
-        start++;
-    }
-    cout<<"\n";
-}
+
 
 
 int main(){
@@ -60,7 +48,6 @@ int main(){
     auto start = std::chrono::high_resolution_clock::now();
     
     int fd = open("sample.txt",O_RDONLY);
-    // int fd = open("sample2.txt",O_RDONLY);
     struct stat st;
     fstat(fd,&st);
     size_t fileSize = st.st_size;
@@ -79,12 +66,9 @@ int main(){
             cout<<"nothing found here returned nullpointer"<<endl;
             break;
         }else{
-            midLine = (char*)memchr(lineStart,';',fileSize-lineSize);
-            parseStation(lineStart,midLine);
-            parseTemp(midLine+1,lineEnd);
+            midLine = (char*)memchr(lineStart,';',fileSize);
+            parseLine(lineStart,midLine+1,lineEnd);
         }
-        // parseStation(lineStart,midLine-1);
-        // parseLine(lineStart,lineEnd);
         lineSize=lineEnd-lineStart;
         counter+=lineSize;
         lineStart=lineEnd+1;

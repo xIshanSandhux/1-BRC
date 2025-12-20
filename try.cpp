@@ -19,6 +19,7 @@ int main(){
     
 
     while(std::getline(sampleFile,line)){
+        // cout<<line<<endl;
     }
 
     auto end = std::chrono::high_resolution_clock::now();
