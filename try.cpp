@@ -8,6 +8,9 @@ int main(){
     auto start = std::chrono::high_resolution_clock::now();
     std::ifstream sampleFile("sample.txt");
     std::string line;
+    size_t pos;
+    float temp;
+    // std::string line;
 
     // checking if the file exists or not
     if(!sampleFile.is_open()){
@@ -20,6 +23,8 @@ int main(){
 
     while(std::getline(sampleFile,line)){
         // cout<<line<<endl;
+        pos = line.find(";");
+        temp = std::stof(line.substr(pos+1));
     }
 
     auto end = std::chrono::high_resolution_clock::now();

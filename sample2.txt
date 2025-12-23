@@ -1,2 +1,4 @@
 Beijing;2.9
-Beijing;2.9
+Beijing;23.9
+Beijing;-0.9
+Beijing
