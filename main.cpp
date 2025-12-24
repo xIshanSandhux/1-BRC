@@ -65,10 +65,10 @@ int main(){
 
     
 
-    for(const auto& [key,value]:hMap){
-        // cout.precision(2);
-        cout << key << ";min="<<value.min<<";max="<<value.max<<";avg="<< value.avg() <<endl;
-    }
+    // for(const auto& [key,value]:hMap){
+    //     // cout.precision(2);
+    //     cout << key << ";min="<<value.min<<";max="<<value.max<<";avg="<< value.avg() <<endl;
+    // }
 
     auto end = std::chrono::high_resolution_clock::now();
 

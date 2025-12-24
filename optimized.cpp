@@ -14,19 +14,18 @@ using namespace std;
 
 
 struct Stats{
-    float sum=0;
-    float max;
-    float min;
-    int count=0;
-
-    Stats(float temp){
+    int sum=0;
+    unsigned int count=0;
+    int16_t min,max;
+    
+    void intialize(int16_t temp){
         max = temp;
         min = temp;
         sum+=temp;
         count++;
     }
 
-    void update(float temp){
+    void update(int16_t temp){
         if(max<temp) max=temp;
         if(min>temp) min=temp;
         sum+=temp;
@@ -35,11 +34,11 @@ struct Stats{
 
 };
 
-unordered_map<string,Stats> db;
+unordered_map<string_view,Stats> db;
 
 
 void parseLine(char* start, char* mid, char* end){
-    // string_view station(start,mid-start-1);
+    string_view station(start,mid-start-1);
     size_t s = end-mid;
 
     int16_t t=0;
@@ -51,6 +50,12 @@ void parseLine(char* start, char* mid, char* end){
         }
     }
     if(*mid=='-') t*=-1;
+
+    if(db.find(station)==db.end()){
+        db[station].intialize(t);
+    }else{
+        db[station].update(t);
+    }
 }
 
 
