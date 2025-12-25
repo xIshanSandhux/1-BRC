@@ -8,7 +8,7 @@
 using namespace std;
 
 int main(){
-    std::ifstream sampleFile("sample.txt");
+    std::ifstream sampleFile("measurements10m.txt");
     std::string line;
     size_t pos;
     std::string station;
@@ -74,9 +74,8 @@ int main(){
 
     auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
     auto ms = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-    std::cout << ns.count() << " ns\n";
-    cout<<ms.count()<<" ms\n";
-
+    // std::cout << ns.count() << " ns\n";
+    // cout<<ms.count()<<" ms\n";
 
     return 0;
 }

@@ -4,14 +4,12 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <cstdio>
-#include <chrono>
 #include <cstring>
 #include <unordered_map>
 #include <string_view>
 #include <charconv>
 #include <typeinfo>
 using namespace std;
-
 
 struct Stats{
     int sum=0;
@@ -32,10 +30,13 @@ struct Stats{
         count++;
     }
 
+    void printVals(){
+        cout<<max<<" "<<min<<" " <<" "<<sum<<" "<<count<<endl;
+    }
+
 };
 
 unordered_map<string_view,Stats> db;
-
 
 void parseLine(char* start, char* mid, char* end){
     string_view station(start,mid-start-1);
@@ -59,46 +60,35 @@ void parseLine(char* start, char* mid, char* end){
 }
 
 
-
-
 int main(){
-
-    auto start = std::chrono::high_resolution_clock::now();
     
-    int fd = open("sample.txt",O_RDONLY);
+    int fd = open("measurements10m.txt",O_RDONLY);
     struct stat st;
     fstat(fd,&st);
     size_t fileSize = st.st_size;
     char* file = (char*) mmap(NULL,fileSize,PROT_READ,MAP_PRIVATE,fd,0);
 
-    size_t curr_pos=0;
     char* lineStart= file;
     char* lineEnd;
     char* midLine;
-    char* fraction;
 
-    size_t lineSize=0,counter=0;
-    while(counter<=fileSize){
+    size_t counter=0;
+    while(counter<fileSize){
         lineEnd = (char*)memchr(lineStart,'\n',fileSize);
-
         if(lineEnd==nullptr) {
-            cout<<"nothing found here returned nullpointer"<<endl;
             break;
         }else{
             midLine = (char*)memchr(lineStart,';',fileSize);
+            if(midLine==nullptr) break;
             parseLine(lineStart,midLine+1,lineEnd);
+            counter+=(lineEnd-lineStart);
+            lineStart=lineEnd+1;
+            if(*lineStart=='\n' || *lineStart=='\0') break;
         }
-        lineSize=lineEnd-lineStart;
-        counter+=lineSize;
-        lineStart=lineEnd+1;
     }
     munmap(file,fileSize);
     close(fd);
 
-    auto end = std::chrono::high_resolution_clock::now();
-
-    auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
-    std::cout << ns.count() << " ns\n";
     return 0;
 }
 
