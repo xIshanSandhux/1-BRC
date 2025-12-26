@@ -35,7 +35,7 @@ struct Stats{
     }
 
 };
-
+// need to create a custom flat hashmap cause this is slow
 unordered_map<string_view,Stats> db;
 
 void parseLine(char* start, char* mid, char* end){
@@ -59,7 +59,7 @@ void parseLine(char* start, char* mid, char* end){
     }
 }
 
-
+ 
 int main(){
     
     int fd = open("measurements10m.txt",O_RDONLY);
@@ -73,6 +73,7 @@ int main(){
     char* midLine;
 
     size_t counter=0;
+    db.reserve(8858);
     while(counter<fileSize){
         lineEnd = (char*)memchr(lineStart,'\n',fileSize);
         if(lineEnd==nullptr) {
