@@ -33,10 +33,18 @@ struct Stats{
     void printVals(){
         cout<<max<<" "<<min<<" " <<" "<<sum<<" "<<count<<endl;
     }
-
 };
 // need to create a custom flat hashmap cause this is slow
 unordered_map<string_view,Stats> db;
+
+struct DB{
+    DB(): stations_{}, stats_{}, filled_{} {}
+
+    std::string stations_[16000];
+    Stats stats_[16000];
+    std::int filled_[16000];
+
+};
 
 void parseLine(char* start, char* mid, char* end){
     string_view station(start,mid-start-1);
