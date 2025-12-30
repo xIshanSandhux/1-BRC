@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <string_view>
 #include <charconv>
+#include <functional>
 #include <typeinfo>
 using namespace std;
 
@@ -30,21 +31,41 @@ struct Stats{
         count++;
     }
 
-    void printVals(){
-        cout<<max<<" "<<min<<" " <<" "<<sum<<" "<<count<<endl;
-    }
 };
-// need to create a custom flat hashmap cause this is slow
-unordered_map<string_view,Stats> db;
 
 struct DB{
-    DB(): stations_{}, stats_{}, filled_{} {}
+    DB(): stations_{}, stats_{} {}
 
-    std::string stations_[16000];
-    Stats stats_[16000];
-    std::int filled_[16000];
+    void enter(string_view station, int16_t temp){
+        size_t index = slotFind(station);
 
+        if(stations_[index].empty()){
+            stations_[index]=station;
+            stats_[index].intialize(temp);
+        }else{
+            stats_[index].update(temp);
+        }
+
+    }
+
+    size_t slotFind(string_view station){
+        size_t index = (hash<string_view>{}(station))&(32767);
+
+        while((stations_[index].empty())==false){
+            if(stations_[index]==station){
+                return index;
+            }
+            index = (index+1)%32767;
+           
+        }
+        return index;
+    }
+
+    array<string_view,32768> stations_;
+    array<Stats,32768> stats_;
 };
+
+DB db;
 
 void parseLine(char* start, char* mid, char* end){
     string_view station(start,mid-start-1);
@@ -59,12 +80,7 @@ void parseLine(char* start, char* mid, char* end){
         }
     }
     if(*mid=='-') t*=-1;
-
-    if(db.find(station)==db.end()){
-        db[station].intialize(t);
-    }else{
-        db[station].update(t);
-    }
+    db.enter(station,t);
 }
 
  
@@ -81,7 +97,6 @@ int main(){
     char* midLine;
 
     size_t counter=0;
-    db.reserve(8858);
     while(counter<fileSize){
         lineEnd = (char*)memchr(lineStart,'\n',fileSize);
         if(lineEnd==nullptr) {
