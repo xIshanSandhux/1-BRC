@@ -67,19 +67,20 @@ struct DB{
 
 DB db;
 
-void parseLine(char* start, char* mid, char* end){
+void parseLine(char* start, char* mid){
     string_view station(start,mid-start-1);
-    size_t s = end-mid;
+
+    bool neg = (*mid=='-');
+    if (neg) mid++;
 
     int16_t t=0;
-    for(size_t i=0;i<s;i++){
-        if(*(mid+i)!='.' && i==0 && *(mid+i)!='-'){
-            t =  *(mid+i)-'0';
-        }else if (*(mid+i)!='.' && *(mid+i)!='-'){
-            t = t*10+ (*(mid+i)-'0');
+    while(*mid!='\n'){
+        if(*mid!='.'){
+            t = t*10+ (*mid-'0');
         }
+        mid++;
     }
-    if(*mid=='-') t*=-1;
+    if (neg) t*=-1;
     db.enter(station,t);
 }
 
@@ -104,7 +105,7 @@ int main(){
         }else{
             midLine = (char*)memchr(lineStart,';',fileSize);
             if(midLine==nullptr) break;
-            parseLine(lineStart,midLine+1,lineEnd);
+            parseLine(lineStart,midLine+1);
             counter+=(lineEnd-lineStart);
             lineStart=lineEnd+1;
             if(*lineStart=='\n' || *lineStart=='\0') break;
