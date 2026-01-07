@@ -48,5 +48,5 @@ One of the rules was not to use 3rd party libraries, therefore I decided to buil
 I went with open addressing and linear probing approach because it was cache friendly. 
 
 ## Currently working on
-Currently working on multithreading.
+Currently working on the chunking of the file for multithreading.
 
