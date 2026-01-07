@@ -92,7 +92,7 @@ int main(){
     int totalThreads = 4;    
     cout<<"Total threads: "<<totalThreads<<endl;
     
-    int fd = open("measurements10k.txt",O_RDONLY);
+    int fd = open("measurements10m.txt",O_RDONLY);
     struct stat st;
     fstat(fd,&st);
     size_t fileSize = st.st_size;
@@ -106,20 +106,19 @@ int main(){
     size_t offset = 0;
     for(int i=0;i<totalThreads;i++){
         cout<<"hello"<<endl;
-        while(*(fileFull+temp)!='\n' ){
+        while(*(fileFull+temp)!='\n'){
             temp++;
         }
         if (i==0){
-            chunks[i] = (char*)mmap(NULL,temp,PROT_READ,MAP_PRIVATE,fd,offset);
+            chunks[i] = (fileFull+temp);
             cout<<"hey after storing chunk 0"<<endl;
-            cout<<*(chunks[i]+temp)<<endl;
+            cout<<*(chunks[i])<<endl;
         }else{
-            chunks[i] = (char*)mmap(NULL,temp,PROT_READ,MAP_PRIVATE,fd,offset);
+            chunks[i] = (fileFull+temp);
             cout<<"hey after storing chunk other than 0"<<endl;
-            cout<<*(chunks[i]+temp)<<endl;
+            cout<<*(chunks[i])<<endl;
         }
-        offset = temp+1;
-        temp = totalChunkSize;
+        temp = temp+1;
     }
     //cout<<*(file+10)<<endl;
 
