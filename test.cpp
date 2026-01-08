@@ -100,25 +100,41 @@ int main(){
     //based chunk size for each thread
     size_t totalChunkSize = fileSize/totalThreads;
     cout<<"Base chunk size per thread: "<<totalChunkSize<<endl;
+    
     char* fileFull = (char*) mmap(NULL,fileSize,PROT_READ,MAP_PRIVATE,fd,0);
+    
     size_t temp = totalChunkSize;
     char* chunks[totalThreads];
-    size_t offset = 0;
-    for(int i=0;i<totalThreads;i++){
+    int chunkSize[totalThreads];
+    for(int i=0;i<totalThreads-1;i++){
         cout<<"hello"<<endl;
-        while(*(fileFull+temp)!='\n'){
-            temp++;
-        }
+        cout<<"value of temp ebfore moving until the new line from thread: "<<i<<"is: "<<temp<<endl;
         if (i==0){
+            while(*(fileFull+temp)!='\n'){
+                temp++;
+            }
             chunks[i] = (fileFull+temp);
-            cout<<"hey after storing chunk 0"<<endl;
-            cout<<*(chunks[i])<<endl;
+            //cout<<"hey after storing chunk 0"<<endl;
+            //cout<<*(chunks[i])<<endl;
+            //cout<<temp<<endl;
         }else{
-            chunks[i] = (fileFull+temp);
-            cout<<"hey after storing chunk other than 0"<<endl;
-            cout<<*(chunks[i])<<endl;
+            while(*(chunks[i-1]+temp)!='\n'){
+              //  cout<<*(chunks[i-1]+temp)<<"for thread number: "<<i<<endl;
+                temp++;
+            }
+            //cout<<"value of temp from thread: "<<i<<"is: "<<temp<<endl;
+            chunks[i] = (chunks[i-1]+temp);
+            if (i==3){
+                cout<<"i==3"<<endl;
+            //cout<<chunks[i];
+            }
+            //cout<<"hey after storing chunk other than 0"<<endl;
+            //cout<<*(chunks[i]+1)<<endl;
+          //  cout<<temp<<endl;
         }
-        temp = temp+1;
+        //cout<<"total chunks left: "<<totalChunkSize-temp<<endl;
+        temp = totalChunkSize-(temp-totalChunkSize)+1; 
+        cout<<"new value of temp: "<<temp<<endl;
     }
     //cout<<*(file+10)<<endl;
 
