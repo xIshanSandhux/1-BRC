@@ -106,37 +106,30 @@ int main(){
     size_t temp = totalChunkSize;
     char* chunks[totalThreads];
     int chunkSize[totalThreads];
-    for(int i=0;i<totalThreads-1;i++){
-        cout<<"hello"<<endl;
-        cout<<"value of temp ebfore moving until the new line from thread: "<<i<<"is: "<<temp<<endl;
+    for(int i=0;i<totalThreads;i++){
+        cout<<"thread: "<<i<<endl;
         if (i==0){
             while(*(fileFull+temp)!='\n'){
                 temp++;
             }
             chunks[i] = (fileFull+temp);
-            //cout<<"hey after storing chunk 0"<<endl;
-            //cout<<*(chunks[i])<<endl;
-            //cout<<temp<<endl;
         }else{
             while(*(chunks[i-1]+temp)!='\n'){
-              //  cout<<*(chunks[i-1]+temp)<<"for thread number: "<<i<<endl;
+                if(*(chunks[i-1]+temp)=='\0'){
+                    int counter=1;
+                    while(*(chunks[i-1]+ counter)!='\0'){
+                      counter++;
+                    }
+                    chunks[i] = chunks[i-1]+counter-1;
+                    break;
+                      }
                 temp++;
             }
-            //cout<<"value of temp from thread: "<<i<<"is: "<<temp<<endl;
             chunks[i] = (chunks[i-1]+temp);
-            if (i==3){
-                cout<<"i==3"<<endl;
-            //cout<<chunks[i];
-            }
-            //cout<<"hey after storing chunk other than 0"<<endl;
-            //cout<<*(chunks[i]+1)<<endl;
-          //  cout<<temp<<endl;
         }
-        //cout<<"total chunks left: "<<totalChunkSize-temp<<endl;
+        cout<<*(chunks[i])<<endl;
         temp = totalChunkSize-(temp-totalChunkSize)+1; 
-        cout<<"new value of temp: "<<temp<<endl;
     }
-    //cout<<*(file+10)<<endl;
 
     char* lineStart= fileFull;
     char* lineEnd;
