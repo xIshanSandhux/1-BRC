@@ -70,6 +70,7 @@ DB db;
 
 void parseLine(char* start, char* mid){
     string_view station(start,mid-start-1);
+    // cout<<station<<endl;
 
     bool neg = (*mid=='-');
     if (neg) mid++;
@@ -145,7 +146,20 @@ int main(){
 
         }           
     }
+    // initializing threads
+    std::thread worker1 (parseChunk,chunks[0],chunkSize[0],fileSize);
+    // cout<<"thread 1 running"<<endl;
+    std::thread worker2 (parseChunk,chunks[1],chunkSize[1],fileSize);
+    // cout<<"thread 2 running"<<endl;
+    std::thread worker3 (parseChunk,chunks[2],chunkSize[2],fileSize);
+    // cout<<"thread 3 running"<<endl;
+    std::thread worker4 (parseChunk,chunks[3],chunkSize[3],fileSize);
+    // cout<<"thread 4 running"<<endl;
 
+    worker1.join();
+    worker2.join();
+    worker3.join();
+    worker4.join();
 
     char* lineStart= fileFull;
     char* lineEnd;
