@@ -82,54 +82,70 @@ void parseLine(char* start, char* mid){
         mid++;
     }
     if (neg) t*=-1;
-    db.enter(station,t);
+    // db.enter(station,t);
 }
 
+void parseChunk(char* startChunk,int chunkSize, size_t fileSize){
+    int counter=0;
+    char* lineEnd;
+    char* midLine;
+    while(counter<chunkSize){
+        lineEnd = (char*)memchr(startChunk,'\n',fileSize);
+        if(lineEnd==nullptr) {
+            break;
+        }else{
+            midLine = (char*)memchr(startChunk,';',fileSize);
+            if(midLine==nullptr) break;
+            parseLine(startChunk,midLine+1);
+            counter+=(lineEnd-startChunk);
+            startChunk=lineEnd+1;
+            if(*startChunk=='\n' || *startChunk=='\0') break;
+        }
+    }
+}
  
 int main(){
     // The system I am working on has 4 threads that I can use, therefore
     // I am hardcoding them
     int totalThreads = 4;    
-    cout<<"Total threads: "<<totalThreads<<endl;
     
     int fd = open("measurements10m.txt",O_RDONLY);
     struct stat st;
     fstat(fd,&st);
     size_t fileSize = st.st_size;
-    cout<<"total file size: "<<fileSize<<endl;
     //based chunk size for each thread
     size_t totalChunkSize = fileSize/totalThreads;
-    cout<<"Base chunk size per thread: "<<totalChunkSize<<endl;
     
     char* fileFull = (char*) mmap(NULL,fileSize,PROT_READ,MAP_PRIVATE,fd,0);
     
     size_t temp = totalChunkSize;
     char* chunks[totalThreads];
+    chunks[0] = fileFull;
     int chunkSize[totalThreads];
     for(int i=0;i<totalThreads;i++){
-        cout<<"thread: "<<i<<endl;
         if (i==0){
             while(*(fileFull+temp)!='\n'){
                 temp++;
             }
-            chunks[i] = (fileFull+temp);
+            chunkSize[i] = temp;
         }else{
-            while(*(chunks[i-1]+temp)!='\n'){
-                if(*(chunks[i-1]+temp)=='\0'){
-                    int counter=1;
-                    while(*(chunks[i-1]+ counter)!='\0'){
-                      counter++;
-                    }
-                    chunks[i] = chunks[i-1]+counter-1;
+            while(*(chunks[i-1]+chunkSize[i-1]+1+temp)!='\n'){
+                if (*(chunks[i-1]+chunkSize[i-1]+1+temp)=='\0'){
                     break;
-                      }
+                }
                 temp++;
             }
-            chunks[i] = (chunks[i-1]+temp);
+            chunks[i] = (chunks[i-1]+chunkSize[i-1]+1);
+            chunkSize[i] = temp;
         }
-        cout<<*(chunks[i])<<endl;
-        temp = totalChunkSize-(temp-totalChunkSize)+1; 
+        if (temp>totalChunkSize) {
+            temp = totalChunkSize-(temp-totalChunkSize);
+        }else{
+             temp = totalChunkSize-(totalChunkSize-temp); 
+
+        }           
     }
+
 
     char* lineStart= fileFull;
     char* lineEnd;
