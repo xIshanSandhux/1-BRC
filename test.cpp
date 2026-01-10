@@ -6,11 +6,8 @@
 #include <unistd.h>
 #include <cstdio>
 #include <cstring>
-#include <unordered_map>
 #include <string_view>
-#include <charconv>
 #include <functional>
-#include <typeinfo>
 using namespace std;
 
 struct Stats{
@@ -68,9 +65,8 @@ struct DB{
 
 DB db;
 
-void parseLine(char* start, char* mid){
+void parseLine(char* start, char* mid){ 
     string_view station(start,mid-start-1);
-    // cout<<station<<endl;
 
     bool neg = (*mid=='-');
     if (neg) mid++;
@@ -83,7 +79,7 @@ void parseLine(char* start, char* mid){
         mid++;
     }
     if (neg) t*=-1;
-    // db.enter(station,t);
+    db.enter(station,t);
 }
 
 void parseChunk(char* startChunk,int chunkSize, size_t fileSize){
@@ -118,7 +114,7 @@ int main(){
     size_t totalChunkSize = fileSize/totalThreads;
     
     char* fileFull = (char*) mmap(NULL,fileSize,PROT_READ,MAP_PRIVATE,fd,0);
-    
+   // chunking the file 
     size_t temp = totalChunkSize;
     char* chunks[totalThreads];
     chunks[0] = fileFull;
@@ -148,37 +144,14 @@ int main(){
     }
     // initializing threads
     std::thread worker1 (parseChunk,chunks[0],chunkSize[0],fileSize);
-    // cout<<"thread 1 running"<<endl;
     std::thread worker2 (parseChunk,chunks[1],chunkSize[1],fileSize);
-    // cout<<"thread 2 running"<<endl;
     std::thread worker3 (parseChunk,chunks[2],chunkSize[2],fileSize);
-    // cout<<"thread 3 running"<<endl;
     std::thread worker4 (parseChunk,chunks[3],chunkSize[3],fileSize);
-    // cout<<"thread 4 running"<<endl;
 
     worker1.join();
     worker2.join();
     worker3.join();
     worker4.join();
-
-    char* lineStart= fileFull;
-    char* lineEnd;
-    char* midLine;
-
-    size_t counter=0;
-    while(counter<fileSize){
-        lineEnd = (char*)memchr(lineStart,'\n',fileSize);
-        if(lineEnd==nullptr) {
-            break;
-        }else{
-            midLine = (char*)memchr(lineStart,';',fileSize);
-            if(midLine==nullptr) break;
-            parseLine(lineStart,midLine+1);
-            counter+=(lineEnd-lineStart);
-            lineStart=lineEnd+1;
-            if(*lineStart=='\n' || *lineStart=='\0') break;
-        }
-    }
 
     munmap(fileFull,fileSize);
     close(fd);
