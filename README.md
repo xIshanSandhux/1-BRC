@@ -26,7 +26,7 @@ At the end I would just print the stats from the map.
 ## Optimized Version
 Since the time I started optimizations, perf (profiler) became my best friend. I would not optimize anything without consulting perf.
 
-### Optimization 1: memap
+### Optimization 1: memmap
 The first bottleneck was file reading. After reading how ifstream works and the abstraction layers, I realized that I dont need any of it. So I decided not to use them and go straight to the source. 
 
 However instead of read() I decided to go with mmap as I found out that its better for larger files.
