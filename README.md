@@ -47,6 +47,12 @@ One of the rules was not to use 3rd party libraries, therefore I decided to buil
 
 I went with open addressing and linear probing approach because it was cache friendly. 
 
-## Currently working on
-Currently working on the chunking of the file for multithreading.
+### Optimization 4: Multi threading
+Well, the last major optimization that I added was multi threading. after confirming that my system got 4 threads that I can use, I decided to use all of them.
+To make that happen, I had to divide the file into 4 different chunks and make sure they end at '\n' so that its easier for parsing the file.
 
+Initally I was giving each thread its own local custom hashmap as a db but then I realized that would not be a good idea because it would take more time and memory in allocating and using the local db instead of 1 shared db.
+
+Yes, its a good practice to use mutexes when mutliple threads are accessing the same shared var, however I did not use them because I did not get any race conditions and performance wise it was better.
+
+I could have used more than 4 threads, but it would be of no help infact it could hurt the performance because at the same time only 4 threads can run and other threads would need to wait.
